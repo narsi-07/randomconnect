@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+    <title>Free4Talk - Connect with Strangers via Video Call and Chat</title>
+    
+    <!-- Meta Tags for SEO -->
+    <meta name="description" content="Free4Talk is a platform to connect with random strangers via video call and chat. Make new friends, have fun, and enjoy random conversations.">
+    <meta name="keywords" content="free4talk app, random stranger,omegle alternatives,free4talk, online chat, video chat,ometv, online video call">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.free4talk.xyz/">
+    <link href='/Omegle_clone/public/magicstudio-art-removebg-preview.png' rel='icon' type='image/x-icon'/>
+  
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="Free4Talk - Connect with Strangers via Video Call and Chat">
+    <meta property="og:description" content="Free4Talk is a platform to connect with random strangers via video call and chat. Make new friends, have fun, and enjoy random conversations.">
+    <meta property="og:url" content="https://www.free4talk.xyz/">
+    <meta property="og:image" content="https://www.free4talk.xyz/path/to/social-image.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free4Talk - Connect with Strangers via Video Call and Chat">
+    <meta name="twitter:description" content="Free4Talk is a platform to connect with random strangers via video call and chat. Make new friends, have fun, and enjoy random conversations.">
+    <meta name="twitter:image" content="https://www.free4talk.xyz/path/to/twitter-image.jpg">
+
+        <!-- Schema Markup for SEO -->
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Free4Talk",
+        "url": "https://www.free4talk.xyz/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.free4talk.xyz/?s={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+  
+    <!-- Bootstrap -->
+    <link href="libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="libs/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="resources/css/app.css" rel="stylesheet">
+  
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+    <style>
+      .container-fluid {
+        background: linear-gradient(to top left, #18a3bc, #000000);
+      }
+      #partnerVideo {
+        border: 2px solid white;
+        width: 100vw;
+        height: 70vh;
+        border-radius: 9px;
+        object-fit: cover;
+      }
+      #selfVideo {
+        border: 2px solid white;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      #next_btn, #stop_btn, #next2_btn {
+        position: fixed;
+        bottom: 20px;
+        width: auto;
+        padding: 10px 20px;
+      }
+      #next_btn {
+        right: 20px;
+      }
+      #stop_btn {
+        left: 20px;
+      }
+      #next2_btn {
+        left: calc(50% - 40px); /* Centered between stop and next buttons */
+      }
+      #chat_button {
+        position: fixed;
+        color: white;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+      }
+      #status_popup, #chat_popup {
+        border-radius: 9px;
+        display: none;
+        position: fixed;
+        top: 50px;
+        right: 20px;
+        width: 300px;
+        height: 430px;
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        overflow-y: scroll;
+        /* Hide scrollbar for IE, Edge and Firefox */
+        scrollbar-width: none;
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        -ms-overflow-style: none;
+      }
+      #status_popup {
+        height: auto;
+      }
+      #status_popup .close_btn, #chat_popup .close_btn {
+        position: absolute;
+        top: -1px;
+        right: 5px;
+        cursor: pointer;
+        font-size: 24px;
+        margin-right: 1px;
+      }
+      #chat_popup .messages {
+        height: 300px;
+        overflow-y: scroll;
+        /* Hide scrollbar for IE, Edge and Firefox */
+        scrollbar-width: none;
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        -ms-overflow-style: none;
+      }
+      #chat_popup .input input {
+        width: 100%;
+        height: 30px;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      #chat_popup .input button {
+        width: 100%;
+        margin-top: 10px;
+      }
+      #chat_popup .input textarea {
+        width: 100%;
+        height: 50px;
+      }
+      #chat_popup .input button {
+        width: 100%;
+      }
+      .red_dot {
+        height: 10px;
+        width: 10px;
+        background-color: red;
+        border-radius: 50%;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        display: none;
+      }
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      #status_popup::-webkit-scrollbar, 
+      #chat_popup::-webkit-scrollbar, 
+      #chat_popup .messages::-webkit-scrollbar {
+        display: none;
+      }
+      /* Message styling */
+      .message-container {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+      }
+      .message-container.me {
+        justify-content: flex-end;
+      }
+      .message {
+        max-width: 70%;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .message.me {
+        background-color: #d4f1d4;
+        align-self: flex-end;
+        margin-right: 10px;
+      }
+      .message.stranger {
+        background-color: #f1f1f1;
+        align-self: flex-start;
+      }
+
+      #menu_button {
+  position: fixed;
+  top: 20px;
+  left: 20px; /* Change this to left side */
+  cursor: pointer;
+  z-index: 1000;
+  color: #d4f1d4;
+}
+
+#sidebar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0; /* Change this to left side */
+  width: 250px;
+  height: 100%;
+  background: rgb(255, 255, 255);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Adjust shadow direction */
+  z-index: 999;
+  padding: 20px;
+}
+
+#sidebar .close_btn {
+  position: absolute;
+  top: 10px;
+  right: 10px; /* Close button on right */
+  cursor: pointer;
+  font-size: 24px;
+  color: rgb(0, 255, 213);
+}
+
+#sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 50px;
+}
+
+#sidebar ul li {
+  margin: 20px 0;
+}
+
+#sidebar ul li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 18px;
+}
+
+    </style>
+  </head>
+<body>
+
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://www.free4talk.xyz/sitemap.xml" />
+
+  <div id="menu_button">
+    <i class="fa fa-ellipsis-v fa-2x"></i>
+  </div>
+
+  <div id="sidebar">
+    <div class="close_btn">x</div>
+    <ul>
+      <li><a href="https://www.aboutus.free4talk.xyz">About Us</a></li>
+      <li><a href="https://www.Contact.free4talk.xyz">Contact Us</a></li>
+      <li><a href="https://www.Disclaimer.free4talk.xyz">Disclaimer</a></li>
+
+    </ul>
+  </div>
+
+  <div id="age_verification_popup" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Age Verification</h4>
+        </div>
+        <div class="modal-body">
+          <p>You must be 18 years or older to use this website.</p>
+          <label>
+            <input type="checkbox" id="age_verification_checkbox"> I am 18 years or older
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="age_verification_ok_btn" disabled>OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid height-fill">
+    <div class="row height-fill pos-middle">
+      <div id="video_container" class="col-xs-12">
+        <video poster="https://media.istockphoto.com/id/662195074/vector/anonymous-user-icon.jpg?s=612x612&w=0&k=20&c=ZWgmBwLeR2uMBOSbZJ8NC7YDusHjw7YqZQW26LbkYo8=" id="partnerVideo"></video>
+        <video poster="https://t4.ftcdn.net/jpg/00/32/44/53/360_F_32445303_fOmurtPlubp0PDwggnsyqhteqLKXsahO.jpg" alt="Self Video" id="selfVideo"></video> 
+      </div>
+    </div>
+  </div>
+
+
+  <h1>Connect with Strangers on Free4Talk</h1>
+  <p>Engage in random video calls and chats with people from all over the world. Make new friends, have fun, and enjoy random conversations!</p>
+   <a id="stop_btn" class="btn btn-block btn-danger" title="Stop The Chat">
+    <i class="fa-3x"></i>
+    <span class="shortcut">Stop</span>
+  </a>
+  <a id="next2_btn" class="btn btn-block btn-warning" title="Get a Random Stranger">
+    <i class="fa-3x"></i>
+    <span class="shortcut">Connect</span>
+  </a>
+  <a id="next_btn" class="btn btn-block btn-success" title="Get a Random Stranger">
+    <i class="fa-3x"></i>
+    <span class="shortcut">Next</span>
+  </a>
+
+  <div id="chat_button">
+    <i class="fa fa-comments fa-2x"></i>
+    <div class="red_dot"></div>
+  </div>
+
+  <div id="status_popup">
+    <div class="close_btn">x</div>
+    <div class="status_message"></div>
+  </div>
+
+  <div id="chat_popup">
+    <div class="close_btn">x</div>
+    <div class="messages" id="messages_container"></div>
+    <div class="input">
+      <input type="text" id="message" />
+      <button id="send_btn" class="btn btn-success btn-block">Send</button>
+    </div>
+  </div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="libs/jquery/jquery-1.11.3.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/easyrtc/easyrtc.js"></script>
+  <script src="resources/js/app.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $('#age_verification_checkbox').change(function() {
+        if($(this).is(':checked')) {
+          $('#age_verification_ok_btn').prop('disabled', false);
+        } else {
+          $('#age_verification_ok_btn').prop('disabled', true);
+        }
+      });
+
+      $('#age_verification_ok_btn').click(function() {
+        $('#age_verification_popup').modal('hide');
+      });
+
+      $('#age_verification_popup').modal('show');
+    });
+  </script>
+<script>
+  $(document).ready(function() {
+    // Existing code
+
+    // Show the sidebar when the menu button is clicked
+    $('#menu_button').click(function() {
+      $('#sidebar').toggle();
+    });
+
+    // Hide the sidebar when the close button is clicked
+    $('#sidebar .close_btn').click(function() {
+      $('#sidebar').hide();
+    });
+  });
+</script>
+
+  
+</body>
+</html>
